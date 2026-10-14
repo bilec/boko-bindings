@@ -21,12 +21,17 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - run: ./gradlew :android:lintRelease :android:publishReleasePublicationToStagingRepository :android:assembleDebugAndroidTest
-      - uses: actions/upload-artifact@v4
+      - name: Validate Android build on branches and PRs
+        if: github.event_name != 'push' || !startsWith(github.ref, 'refs/tags/v')
+        run: ./gradlew :android:lintRelease :android:publishReleasePublicationToMavenLocal :android:assembleDebugAndroidTest
+      - name: Publish Android release to Sonatype
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-        with:
-          name: boko-android
-          path: build/maven/
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKey }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKeyPassword }}
+        run: ./gradlew :android:lintRelease :android:assembleRelease :android:publishReleasePublicationToSonatype closeAndReleaseSonatypeStagingRepository
 
   python:
     strategy:
