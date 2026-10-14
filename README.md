@@ -72,7 +72,8 @@ Uses the committed Cargo lockfile. Not a validated F-Droid recipe.
 Keep the version in sync across `Cargo.toml`, `build.gradle.kts`, and
 `python/pyproject.toml`.
 
-`v*` tags publish the AAR to Maven Central. Required secrets: `OSSRH_USERNAME` and
+`v*` tags publish the AAR to Maven Central and the wheels/sdist to PyPI (trusted
+publishing from `ci.yml`, no token). Required secrets: `OSSRH_USERNAME` and
 `OSSRH_PASSWORD` (Central Portal user token), `ORG_GRADLE_PROJECT_signingInMemoryKey`
 and `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` (armored GPG key).
 

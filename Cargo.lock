@@ -54,7 +54,7 @@ dependencies = [
 
 [[package]]
 name = "boko-android-jni"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "boko-bindings-core",
  "jni",
@@ -62,7 +62,7 @@ dependencies = [
 
 [[package]]
 name = "boko-bindings-core"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "boko",
  "zip",
@@ -70,7 +70,7 @@ dependencies = [
 
 [[package]]
 name = "boko-python"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "boko-bindings-core",
  "pyo3",
