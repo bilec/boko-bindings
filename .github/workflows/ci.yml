@@ -21,12 +21,15 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: gradle
-      - run: ./gradlew :android:lintRelease :android:publishReleasePublicationToStagingRepository :android:assembleDebugAndroidTest
-      - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-        with:
-          name: boko-android
-          path: build/maven/
+      - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: ./gradlew :android:lintRelease :android:publishReleasePublicationToMavenLocal :android:assembleDebugAndroidTest
+      - if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKey }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.ORG_GRADLE_PROJECT_signingInMemoryKeyPassword }}
+        run: ./gradlew :android:publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository
 
   python:
     strategy:
@@ -60,7 +63,7 @@ jobs:
           python -m pip install --no-deps dist/*.whl
           python -m unittest discover -s tests -p test_python.py -v
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
           name: boko-python-${{ matrix.os }}
           path: dist/*

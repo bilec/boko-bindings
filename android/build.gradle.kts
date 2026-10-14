@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("maven-publish")
+    signing
 }
 
 val nativeLibraries = layout.buildDirectory.dir("generated/boko/jniLibs")
@@ -49,6 +50,7 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
+            withJavadocJar()
         }
     }
 }
@@ -59,12 +61,6 @@ dependencies {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "staging"
-            url = rootProject.layout.buildDirectory.dir("maven").get().asFile.toURI()
-        }
-    }
     publications {
         register<MavenPublication>("release") {
             artifactId = "boko-android"
@@ -72,13 +68,35 @@ publishing {
             pom {
                 name.set("boko Android bindings")
                 description.set("Kotlin and JNI bindings for the boko ebook conversion engine")
+                url.set("https://github.com/bilec/boko-bindings")
                 licenses {
                     license {
                         name.set("GNU General Public License, version 3 only")
                         url.set("https://www.gnu.org/licenses/gpl-3.0.html")
                     }
                 }
+                scm {
+                    connection.set("scm:git:https://github.com/bilec/boko-bindings.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/bilec/boko-bindings.git")
+                    url.set("https://github.com/bilec/boko-bindings")
+                }
+                developers {
+                    developer {
+                        id.set("bilec")
+                        name.set("bilec")
+                        url.set("https://github.com/bilec")
+                    }
+                }
             }
         }
+    }
+}
+
+signing {
+    val signingKey = providers.environmentVariable("ORG_GRADLE_PROJECT_signingInMemoryKey")
+    val signingPassword = providers.environmentVariable("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
+    if (signingKey.isPresent) {
+        useInMemoryPgpKeys(signingKey.get(), signingPassword.orNull)
+        sign(publishing.publications)
     }
 }

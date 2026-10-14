@@ -18,11 +18,11 @@ Requires JDK 17+, Android SDK 35 (`ANDROID_HOME` or `sdk.dir`), and Docker for t
 Rust/NDK toolchain. AAR: API 24+, arm64-v8a, armeabi-v7a, x86_64, 16 KB pages.
 
 ```sh
-./gradlew :android:publishReleasePublicationToStagingRepository
+./gradlew :android:publishReleasePublicationToMavenLocal
 ./gradlew :android:connectedDebugAndroidTest
 ```
 
-Staged (unpublished) as `io.github.bilec:boko-android:0.1.0` under `build/maven/`.
+Maven coordinates: `io.github.bilec:boko-android:<version>`.
 
 ```kotlin
 import io.github.bilec.boko.Boko
@@ -70,7 +70,12 @@ Uses the committed Cargo lockfile. Not a validated F-Droid recipe.
 ## Releases
 
 Keep the version in sync across `Cargo.toml`, `build.gradle.kts`, and
-`python/pyproject.toml`. Maven Central/PyPI publishing and signing are not set up.
+`python/pyproject.toml`.
+
+`v*` tags publish the AAR to Maven Central. Required secrets: `OSSRH_USERNAME` and
+`OSSRH_PASSWORD` (Central Portal user token), `ORG_GRADLE_PROJECT_signingInMemoryKey`
+and `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` (armored GPG key).
+
 The eConverter Android app accepts `-PbokoBindingsDir=../boko-bindings` to build against local source.
 
 ## License
