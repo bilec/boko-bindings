@@ -1,0 +1,25 @@
+FROM rust:1.91.0-bookworm AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python3-dev python3-venv \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m venv /venv \
+    && /venv/bin/pip install --no-cache-dir maturin==1.9.6
+ENV PATH="/venv/bin:${PATH}"
+
+WORKDIR /work
+COPY Cargo.toml Cargo.lock LICENSE ./
+COPY native ./native
+COPY android/jni ./android/jni
+COPY python ./python
+COPY tests ./tests
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/work/target \
+    cargo test --locked -p boko-bindings-core \
+    && maturin build --release --locked -m python/Cargo.toml -o /out \
+    && maturin sdist -m python/Cargo.toml -o /out \
+    && pip wheel --no-deps --no-build-isolation /out/*.tar.gz -w /rebuilt \
+    && pip install --no-deps /out/*.whl \
+    && python -m unittest discover -s tests -p test_python.py -v
+
+FROM scratch AS artifacts
+COPY --from=builder /out/ /

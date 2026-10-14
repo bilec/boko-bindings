@@ -1,0 +1,14 @@
+[package]
+name = "boko-python"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "boko_python"
+crate-type = ["cdylib"]
+
+[dependencies]
+boko-bindings-core = { path = "../native" }
+pyo3 = { version = "=0.26.0", features = ["abi3-py311"] }

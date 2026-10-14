@@ -1,0 +1,14 @@
+[build-system]
+requires = ["maturin==1.9.6"]
+build-backend = "maturin"
+
+[project]
+name = "boko-python"
+version = "0.1.0"
+description = "Python bindings for the boko ebook conversion engine"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+
+[tool.maturin]
+module-name = "boko_python"
+features = ["pyo3/extension-module"]
