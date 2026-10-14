@@ -22,7 +22,7 @@ Rust/NDK toolchain. AAR: API 24+, arm64-v8a, armeabi-v7a, x86_64, 16 KB pages.
 ./gradlew :android:connectedDebugAndroidTest
 ```
 
-Published as `io.github.bilec:boko-android:0.1.0`.
+Maven coordinates: `io.github.bilec:boko-android:<version>`.
 
 ```kotlin
 import io.github.bilec.boko.Boko
@@ -72,13 +72,9 @@ Uses the committed Cargo lockfile. Not a validated F-Droid recipe.
 Keep the version in sync across `Cargo.toml`, `build.gradle.kts`, and
 `python/pyproject.toml`.
 
-Android releases are published to Maven Central through Sonatype on tags matching `v*`.
-Configure these GitHub Actions secrets before tagging a release:
-
-- `OSSRH_USERNAME`
-- `OSSRH_PASSWORD`
-- `ORG_GRADLE_PROJECT_signingInMemoryKey`
-- `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword`
+`v*` tags publish the AAR to Maven Central. Required secrets: `OSSRH_USERNAME` and
+`OSSRH_PASSWORD` (Central Portal user token), `ORG_GRADLE_PROJECT_signingInMemoryKey`
+and `ORG_GRADLE_PROJECT_signingInMemoryKeyPassword` (armored GPG key).
 
 The eConverter Android app accepts `-PbokoBindingsDir=../boko-bindings` to build against local source.
 
