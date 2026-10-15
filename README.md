@@ -23,6 +23,7 @@ Rust/NDK toolchain. AAR: API 24+, arm64-v8a, armeabi-v7a, x86_64, 16 KB pages.
 ```
 
 Maven coordinates: `io.github.bilec:boko-android:<version>`.
+Url: https://central.sonatype.com/artifact/io.github.bilec/boko-android
 
 ```kotlin
 import io.github.bilec.boko.Boko
@@ -35,6 +36,8 @@ Cancelling a coroutine does not stop native conversion; use a separate process
 if you need that.
 
 ## Python
+
+Url: https://pypi.org/project/boko-python/
 
 Build and test a Linux wheel in Docker:
 
