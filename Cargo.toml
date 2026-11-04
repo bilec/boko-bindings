@@ -3,13 +3,13 @@ members = ["native", "android/jni", "python"]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 rust-version = "1.91"
 license = "GPL-3.0-only"
 
 [workspace.dependencies]
-boko = { git = "https://github.com/bilec/boko.git", rev = "8ebaa512b3e72ad1e079b92d8ffdbff486df4c3a", version = "=0.5.1-fixes.1", default-features = false }
+boko = { git = "https://github.com/bilec/boko.git", rev = "23fcdcedad99fc4e2fa916c904df6d02fee41fcc", version = "=0.6.1-fixes.1", default-features = false }
 
 [profile.release]
 lto = "thin"

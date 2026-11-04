@@ -4,6 +4,7 @@
 **/build/
 target/
 dist/
+/tmp/
 __pycache__/
 *.pyc
 local.properties

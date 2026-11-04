@@ -1,38 +1,43 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
     id("maven-publish")
     signing
 }
 
-val nativeLibraries = layout.buildDirectory.dir("generated/boko/jniLibs")
-val buildBoko by tasks.registering(Exec::class) {
+abstract class BuildBoko : Exec() {
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+}
+
+val buildBoko = tasks.register<BuildBoko>("buildBoko") {
     inputs.files(rootProject.file("Cargo.toml"), rootProject.file("Cargo.lock"), rootProject.file("Dockerfile.android"))
     inputs.dir(rootProject.file("native"))
     inputs.dir(project.file("jni"))
     inputs.dir(rootProject.file("scripts"))
     inputs.dir(rootProject.file("tests/fixtures"))
-    outputs.dir(nativeLibraries)
-    doFirst { delete(nativeLibraries.get().asFile) }
+    outputDirectory.set(layout.buildDirectory.dir("generated/boko/jniLibs"))
+    doFirst { delete(outputDirectory.get().asFile) }
     if (providers.gradleProperty("bokoBuildMode").getOrElse("docker") == "native") {
-        commandLine("sh", rootProject.file("scripts/build-android.sh").absolutePath, nativeLibraries.get().asFile.absolutePath)
+        commandLine("sh", rootProject.file("scripts/build-android.sh").absolutePath, outputDirectory.get().asFile.absolutePath)
     } else {
         commandLine(
             "docker", "build", "--platform", "linux/amd64",
             "-f", rootProject.file("Dockerfile.android").absolutePath,
-            "--output", "type=local,dest=${nativeLibraries.get().asFile.absolutePath}",
+            "--output", "type=local,dest=${outputDirectory.get().asFile.absolutePath}",
             rootProject.projectDir.absolutePath,
         )
     }
 }
 
-tasks.configureEach {
-    if (name.startsWith("merge") && name.endsWith("JniLibFolders")) dependsOn(buildBoko)
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.jniLibs?.addGeneratedSourceDirectory(buildBoko, BuildBoko::outputDirectory)
+    }
 }
 
 android {
     namespace = "io.github.bilec.boko"
-    compileSdk = 35
+    compileSdk = 37
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,16 +47,22 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    sourceSets {
+        named("androidTest") {
+            assets.directories.add(rootProject.file("tests/fixtures").absolutePath)
+        }
     }
-    sourceSets.getByName("main").jniLibs.srcDir(nativeLibraries)
-    sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("tests/fixtures"))
     publishing {
         singleVariant("release") {
             withSourcesJar()
             withJavadocJar()
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

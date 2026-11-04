@@ -2,10 +2,9 @@
 
 Android and Python bindings for [boko](https://github.com/zacharydenton/boko).
 
-Temporarily uses the [fork prerelease 0.5.1-fixes.1](https://github.com/bilec/boko/releases/tag/v0.5.1-fixes.1),
-pinned to commit `8ebaa512b3e72ad1e079b92d8ffdbff486df4c3a` in
-`Cargo.toml` and `Cargo.lock`. This includes upstream PRs #25, #30, and #32.
-EPUB size splitting remains opt-in and is not enabled by these bindings.
+Temporarily uses the [fork prerelease 0.6.1-fixes.1](https://github.com/bilec/boko/releases/tag/v0.6.1-fixes.1),
+pinned to commit `23fcdcedad99fc4e2fa916c904df6d02fee41fcc` in
+`Cargo.toml` and `Cargo.lock`. This includes upstream PR  #32.
 
 | Directory | Contents |
 | --- | --- |
@@ -19,7 +18,7 @@ No Calibre options or DRM removal.
 
 ## Android
 
-Requires JDK 17+, Android SDK 35 (`ANDROID_HOME` or `sdk.dir`), and Docker for the
+Requires JDK 17+, Android SDK 37 (`ANDROID_HOME` or `sdk.dir`), and Docker for the
 Rust/NDK toolchain. AAR: API 24+, arm64-v8a, armeabi-v7a, x86_64, 16 KB pages.
 
 ```sh
